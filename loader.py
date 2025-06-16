@@ -1,3 +1,4 @@
+### UE6-Integration später möglich via socket.send(json.dumps(features)).
 import importlib
 
 OPTIONAL_MODULES = {
