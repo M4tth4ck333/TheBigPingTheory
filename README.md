@@ -60,6 +60,6 @@ Vision: "Neue Konstruktionsweise"
 TheBigPingTheory geht über klassische Paket- und Protokollanalysen hinaus, indem es Netzwerkereignisse als modular konstruierbare 
 Abläufe darstellt. Nutzer können eigene Szenarien aufbauen, Protokollinteraktionen simulieren und so Netzwerke nicht nur beobachten,
 sondern auch "bauen" und verstehen.
-#„Si vis vincere, primum te ipsum cognosce.“
+# - „Si vis vincere, primum te ipsum cognosce.“ -
 # – „Wenn du siegen willst, erkenne zuerst dich selbst.“ -
 #
