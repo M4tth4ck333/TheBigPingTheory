@@ -9,7 +9,7 @@ TheBigPingTheory
         visualisiert oder Hashes im Rahmen von Sicherheitsanalysen dargestellt und erklärt werden.(Developer Note: Darstellung der Packetanalyse und Vulnerbillity 
         sowie des cracking prozesses).Nutzer erhalten so ein besseres Verständnis für Schwachstellen und Schutzmechanismen in drahtlosen und kabelgebundenen 
         Netzwerken.
-    Scapy:(
+    Scapy:(Developer Note 
         Mit Scapy als flexibler Packet-Engine lassen sich individuelle Pakete erzeugen, manipulieren und
         im Netzwerkverkehr visualisieren. Dies ermöglicht es,eigene Protokollabläufe zu konstruieren,
         und deren Auswirkungen in Echtzeit zu beobachten, und dann Netzwerkkommunikation und -strukturen für      
@@ -23,31 +23,30 @@ TheBigPingTheory
         Dynamische Netzwerkgraphen: Geräte, Router, Switches, Verbindungen
         Visualisierung von Paketwegen und Adressauflösung (inkl. ARP-Requests/Replies
         Protokoll-Inspektion
-
-    Detaillierte Ansicht einzelner Pakete (Header, Payload, Adressen)
-
-    Filter- und Suchfunktionen für spezifische Protokolle oder Geräte
-
-Lern- und Simulationsmodus
-
-    Schritt-für-Schritt-Animationen von Netzwerkereignissen (z.B. Ping, ARP-Auflösung)
-
+        Detaillierte Ansicht einzelner Pakete (Header, Payload, Adressen)
+        Filter- und Suchfunktionen für spezifische Protokolle oder Geräte(Developer Note:ID Vendor Lookup.......)
+        Lern- und Simulationsmodus
+        Schritt-für-Schritt-Animationen von Netzwerkereignissen (z.B. Ping, ARP-Auflösung)
         Erklärung von Protokollabläufen und deren Zusammenspiel
 
 Architektur und Komponenten
-Komponente	Beschreibung
-Packet Sniffer	Erfasst Netzwerkverkehr (z.B. via pcap or sqlalchemy) und extrahiert relevante Protokolldaten(vendor, mac, ping, ip, tcp, hcistatus,)
+        Komponente	Beschreibung
+        Packet Sniffer	Erfasst Netzwerkverkehr (z.B. via pcap or sqlalchemy) 
+                        und extrahiert relevante Protokolldaten(vendor, mac, ping, ip, tcp, hcistatus,)
+        Parser-Engine	Analysiert und dekodiert Protokollheader (WiFi, Ethernet, ARP, ICMP, HCI, ...)
+        Visualisierungslayer der aus der vorligenden datenflut ein Bild erzeugt.
+        Simulationsmodul	Erzeugt und erklärt typische Netzwerkabläufe (Ping, ARP, DHCP, etc.)
 
-Parser-Engine	Analysiert und dekodiert Protokollheader (WiFi, Ethernet, ARP, ICMP, HCI, ...)
-Visualisierungslayer der aus der vorligenden datenflut ein Bild erzeugt.
-Simulationsmodul	Erzeugt und erklärt typische Netzwerkabläufe (Ping, ARP, DHCP, etc.)
 Beispiel-Workflows
 Ping-Analyse:
     Visualisiert den Ablauf eines Ping-Befehls von Host A zu Host B, inkl. ARP-Auflösung, ICMP-Request/Reply und Ethernet-Frames
+
 ARP-Cache-Darstellung:
   Zeigt, wie IP-Adressen zu MAC-Adressen aufgelöst und im ARP-Cache gespeichert werden – inklusive Ablauf bei fehlender Zuordnung und Broadcast.
+
 WiFi- und Ethernet-Frame-Flow:
   Veranschaulicht, wie Datenpakete über verschiedene Medien (kabelgebunden/wireless) übertragen und adressiert werden
+
 Zielgruppen
     Netzwerkadministratoren
     IT-Studierende und Auszubildende
