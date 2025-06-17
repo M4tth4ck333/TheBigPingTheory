@@ -1,8 +1,9 @@
 TheBigPingTheory
 
-ist ein innovatives Framework, das Netzwerkprotokolle wie WiFi, Ethernet, HCI, ARP, ICMP und mehr in einer 
-neuen, interaktiven Konstruktionsweise darstellt.TBPT hebt sich von klassischen Analysewerkzeugen ab, indem es
-Netzwerkereignisse nicht nur passiv darstellt, sondern als modular konstruierbare Abläufe begreifbar machen, 
+ist ein innovatives Framework, das Netzwerkprotokolle wie WiFi, Ethernet, HCI, ARP, ICMP,
+und mehr in einer neuen, interaktiven Konstruktionsweise darstellt.
+TBPT hebt sich von klassischen Analysewerkzeugen ab, indem esNetzwerkereignisse nicht nur 
+passiv darstellt, sondern als modular konstruierbare Abläufe begreifbar machen, 
 und diese fuer nutzer Lehrer und H4cker Gleichermassen dienen. Nutzerinnen und Nutzer können mit dem Programm
 eigene Szenarien entwerfen, Protokollinteraktionen simulieren und so Netzwerke nicht nur beobachten, sondern SIE,
 Sollen diese, aktiv „bauen“ und ihr Verhalten nachvollziehen.Innovative Ansätze durch Integration moderner opensource
@@ -63,8 +64,39 @@ Bildgebung und ueberarbeiteter Tools die hardwarenah in c/c++ abtgefasst sind un
                 TheBigPingTheory versteht Netzwerke als dynamische Konstrukte. Durch das Zusammenspiel aus Live-Analyse, KI-Feedback, Visualisierung,
                 und Simulation entsteht ein Framework, das: Lehrt, wie Netzwerke funktionierenVersteht, wie sie reagieren
                 Erforscht, wie sie kompromittiert oder verteidigt werden könnten und sollten.
-                (Mit Zukunftsmodulen für Drohnenintegration, Bluetooth-Drohnen, mobile Honeypots, Kartenemulation, Deepfake/ID-Spoofing, Biometrie-Klon und mehr.)
-                
+                (Mit  Zukunftsmodulen für Drohnenintegration, Bluetooth-Drohnen, mobile Honeypots, Kartenemulation, Deepfake/ID-Spoofing, Biometrie-Klon.)
+                (Mit Zukunftsmodulen für Interactive sourcecode developement, Itegrety-checking Cli/tkinter/bpython/ipython3 integration)
+                +---------------------+
+                |   PasswordTemplate  |
+                +---------------------+
+                        |
+                        v
+                +----------------------+
+                |  Template Dispatcher |
+                +----------------------+
+                        |
+                +-------+--------+------------+--------------+
+                |        |        |            |              |
+                v        v        v            v              v
+                SOCIAL  MASK    REGEX        TORCH        CUSTOM
+                Gen.    Gen.     Gen.         Gen.          Gen.
+                 |        |        |            |             |
+                 +------> CandidateGenerator (streamed)
+                               |
+                               v
+                          HashChecker
+                               |
+                               v
+                          ResultLogger
+        
+        | Feature               | Beschreibung                                                   |
+        | --------------------- | -------------------------------------------------------------- |
+        | 🔄 Kombi-Templates    | RNN-Ausgabe + Social-Template (`$Name$2024!`)                  |
+        | 📊 Scoring-System     | Wahrscheinlichkeitsbewertung (Softmax-Wert) speichern          |
+        | 🧠 Alternativ-Modelle | GPT2/Transformer statt LSTM                                    |
+        | 🧩 Export             | Generierte Kandidaten direkt als Wordlist oder Hashcat-Masken  |
+        | 🗃 Datenbanklogik     | Speichere Treffer, Wahrscheinlichkeiten, Metadaten automatisch |
+
         ################################################################################################################################################################
         ### Si vis vincere, primum te ipsum cognosce.
         ###> Wenn du siegen willst, erkenne zuerst dich selbst.
