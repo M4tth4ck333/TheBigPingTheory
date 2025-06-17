@@ -40,7 +40,7 @@ TheBigPingTheory
                       Visualyzer                 Topoligscherbilgeber der aus der vorligenden datenflut ein Bild erzeugt.
                       Simulationsmodul           Erzeugt und erklärt typische Netzwerkabläufe (Ping, ARP, DHCP, etc.)
                 Beispiel-Workflows:
-                  (Developer Note🤔??????????### couldn't thing up something practicle).
+                  (Developer Note🤔 Suggestions Welcome).
                 Ping-Analyse:
                   Visualisiert den Ablauf eines Ping-Befehls von Host A zu Host B, inkl. ARP-Auflösung, ICMP-Request/Reply und Ethernet-Frames.
                 ARP-Cache-Darstellung:
