@@ -1,19 +1,20 @@
-from db.engine import engine
-from db.models import Base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import pathlib
+import os
 
-def init():
+from models import Base
+
+BASE_DIR = pathlib.Path(__file__).resolve().parent
+DB_FILE = os.getenv("TEAS_DB_PATH", str(BASE_DIR / "teasesraect.db"))
+
+engine = create_engine(f"sqlite:///{DB_FILE}", connect_args={"check_same_thread": False})
+
+SessionLocal = sessionmaker(bind=engine)
+
+def init_db():
+    print(f"Erstelle DB und Tabellen in: {DB_FILE}")
     Base.metadata.create_all(bind=engine)
-    print("\u2714\ufe0f  Datenbank initialisiert")
 
 if __name__ == "__main__":
-    init()
-
-from db.engine import engine
-from db.models import Base
-
-def init():
-    Base.metadata.create_all(bind=engine)
-    print("\u2714\ufe0f  Datenbank initialisiert")
-
-if __name__ == "__main__":
-    init()
+    init_db()
