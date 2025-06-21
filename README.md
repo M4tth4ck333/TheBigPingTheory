@@ -74,16 +74,7 @@ TheBigPingTheory
                 Erforscht, wie sie kompromittiert oder verteidigt werden könnten und sollten.
                 (Mit  Zukunftsmodulen für Drohnenintegration, Bluetooth-Drohnen, mobile Honeypots, Kartenemulation, Deepfake/ID-Spoofing, Biometrie-Klon.)
                 (Mit Zukunftsmodulen für Interactive sourcecode developement, Itegrety-checking Cli/tkinter/bpython/ipython3 integration)
-              ################################################################################################################################################################
-        ### Si vis vincere, primum te ipsum cognosce.
-        ###> Wenn du siegen willst, erkenne zuerst dich selbst.
-        ### Fortes fortuna adiuvat
-        ###> Das Glück hilft den Tapferen.
-        ###> Merkur (Mercurius) war im römischen Glauben der Gott der Händler, Diebe und der List.
-        ### Mercurius favet callidis.
-        ###> Merkur begünstigt die Schlauen/Listigen.
-        ### Faber est suae quisque fortunae  
-        ###> Jeder ist seines eigenen Glückes Schmied.
+  
         MIT License
         
         Copyright (c) [2025] [Jan Schroeder]
