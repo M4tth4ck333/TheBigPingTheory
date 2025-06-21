@@ -59,11 +59,11 @@ TheBigPingTheory
                   Veranschaulicht, wie Datenpakete über verschiedene Medien (kabelgebunden/wireless) übertragen und adressiert werden.
                 Maleware und Cryptoanalyse:
 🎯 Zielgruppen
-            🛡 Netzwerk-/Sicherheits-Admins
-            🎓 IT-Studierende & Auszubildende
-            🧑‍💻 Entwickler & Software-Sicherheitsteams
-            🧠 Lehrende in Netzwerktechnik/CyberSec
-            🦠 Red/Blue-Teaming & Social Engineering Forschung
+     🛡 Netzwerk-/Sicherheits-Admins
+     🎓 IT-Studierende & Auszubildende
+     🧑‍💻 Entwickler & Software-Sicherheitsteams
+     🧠 Lehrende in Netzwerktechnik/CyberSec
+     🦠 Red/Blue-Teaming & Social Engineering 
         Technische Anforderungen
                 Plattform: Desktop (Linux, macOS)
                 Programmiersprache: Python,C/C++,SQlAlchemy uvm. (z.B. mit Qt für GUI, Scapy für Packet Capture)
