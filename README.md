@@ -63,8 +63,7 @@ Beispiel-Workflows:
             🧑‍💻 Entwickler & Software-Sicherheitsteams
             🧠 Lehrende in Netzwerktechnik/CyberSec
             🦠 Red/Blue-Teaming & Social Engineering Forschung
-        
-        Technische Anforderungen (Vorschlag)
+        Technische Anforderungen
                 Plattform: Desktop (Linux, macOS)
                 Programmiersprache: Python,C/C++,SQlAlchemy uvm. (z.B. mit Qt für GUI, Scapy für Packet Capture)
                 Optional: Web-Version mit WebGL/Canvas für Visualisierung
@@ -74,37 +73,7 @@ Beispiel-Workflows:
                 Erforscht, wie sie kompromittiert oder verteidigt werden könnten und sollten.
                 (Mit  Zukunftsmodulen für Drohnenintegration, Bluetooth-Drohnen, mobile Honeypots, Kartenemulation, Deepfake/ID-Spoofing, Biometrie-Klon.)
                 (Mit Zukunftsmodulen für Interactive sourcecode developement, Itegrety-checking Cli/tkinter/bpython/ipython3 integration)
-                +---------------------+
-                |   PasswordTemplate  |
-                +---------------------+
-                        |
-                        v
-                +----------------------+
-                |  Template Dispatcher |
-                +----------------------+
-                        |
-                +-------+--------+------------+--------------+
-                |        |        |            |              |
-                v        v        v            v              v
-                SOCIAL  MASK    REGEX        TORCH        CUSTOM
-                Gen.    Gen.     Gen.         Gen.          Gen.
-                 |        |        |            |             |
-                 +------> CandidateGenerator (streamed)
-                               |
-                               v
-                          HashChecker
-                               |
-                               v
-                          ResultLogger
-        
-        | Feature               | Beschreibung                                                   |
-        | --------------------- | -------------------------------------------------------------- |
-        | 🔄 Kombi-Templates    | RNN-Ausgabe + Social-Template (`$Name$2024!`)                  |
-        | 📊 Scoring-System     | Wahrscheinlichkeitsbewertung (Softmax-Wert) speichern          |
-        | 🧠 Alternativ-Modelle | GPT2/Transformer statt LSTM                                    |
-        | 🧩 Export             | Generierte Kandidaten direkt als Wordlist oder Hashcat-Masken  |
-        | 🗃 Datenbanklogik     | Speichere Treffer, Wahrscheinlichkeiten, Metadaten automatisch |
-
+                
         ################################################################################################################################################################
         ### Si vis vincere, primum te ipsum cognosce.
         ###> Wenn du siegen willst, erkenne zuerst dich selbst.
