@@ -1,5 +1,6 @@
 TheBigPingTheory
-        ist ein innovatives Framework, das Netzwerkprotokolle wie WiFi, Ethernet, HCI, ARP, ICMP,
+
+ ist ein innovatives Framework, das Netzwerkprotokolle wie WiFi, Ethernet, HCI, ARP, ICMP,
         und mehr in einer neuen, interaktiven Konstruktionsweise darstellt.
         TBPT hebt sich von klassischen Analysewerkzeugen ab, indem esNetzwerkereignisse nicht nur 
         passiv darstellt, sondern als modular konstruierbare Abläufe begreifbar machen, 
