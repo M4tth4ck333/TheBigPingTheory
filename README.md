@@ -1,7 +1,7 @@
 TheBigPingTheory
 
 TheBigPingTheory (TBPT) ist ein innovatives Framework zur interaktiven Visualisierung und Analyse von Netzwerkprotokollen wie WiFi, Ethernet, HCI, ARP, ICMP und vielen mehr. 
-TBPT hebt sich von klassischen Tools ab, indem es Netzwerkereignisse nicht nur passiv darstellt, sondern als modular konstruierbare Abläufe greifbar macht. Es richtet sich gleichermaßen an Nutzer, Lehrer und Hacker.
+TBPT hebt sich von klassischen Tools ab, indem es Netzwerkereignisse nicht nur passiv darstellt, sondern als modular konstruierbare Abläufe greifbar machen soll, um J. Es richtet sich gleichermaßen an Nutzer, Lehrer und Hacker.
 
 Philosophie
 Die Grundidee von TheBigPingTheory (TBPT) ist es, Netzwerkprotokolle und -pakete nicht nur technisch, sondern auch philosophisch zu betrachten. Inspiriert von der kopernikanischen Wende und dem
@@ -14,29 +14,44 @@ Netzwerks zu bewegen, Fragen zu stellen und Zusammenhänge zu entdecken.
 Die Visualisierung und Analyse von Netzwerkprotokollen wird so zu einer Reise durch einen symbolischen Kosmos, bei der Technik und Philosophie Hand in Hand gehen
 Nutzer können eigene Szenarien entwerfen, Protokollinteraktionen simulieren und Netzwerke nicht nur beobachten, sondern aktiv bauen und deren Verhalten nachvollziehen.
 Kernansatz und Technologien
-
     Hardware-nahe Integration: Viele Module sind in C/C++ für hohe Performance entwickelt und werden über Python3-Funktionen nutzbar gemacht.
-
-    Open-Source Tools: Integration von Aircrack-ng und Hashcat ermöglicht praxisnahe Simulationen von WPA2-Handshakes und Passwort-Cracking.
-
+    Open-Source Tools: Integration von EtherApe Sparrow-wifi und Aircrack-ng und Hashcat(und openMinD) ermöglicht praxisnahe Simulationen von WPA2-Handshakes und Passwort-Cracking.
     Flexible Packet-Engines: Scapy und airopy erlauben individuelle Paketgenerierung, Manipulation und Echtzeit-Visualisierung.
-
     KI-Unterstützung: Ein trainierbares PyTorch-Modell mit CSV-Import verbessert Analysen und Mustererkennung.
 
 Hauptfunktionen
+Das Netzwerk als Sonnensystem
+Inspiriert von der kopernikanischen Wende wird das Netzwerk zum symbolischen Sonnensystem:
+    Das Gateway ist die Sonne, das strahlende Zentrum, das alles verbindet und belebt.
+    Die Endgeräte – Computer, Smartphones, IoT – sind die Planeten, die ihre eigenen Bahnen ziehen, aber stets im Austausch mit dem Zentrum stehen.
+    Die Datenpakete sind die wandernden Boten, die als „Reisende“ durch den digitalen Raum fliegen, Informationen transportieren und neue Verbindungen schaffen.
+Perspektivwechsel – Die Stimme der Pakete
+Wie Kopernikus das Weltbild revolutionierte, lädt TBPT dazu ein, den Standpunkt zu wechseln:
+Nicht nur von außen auf das Netzwerk zu schauen, sondern es aus der Perspektive der Pakete zu erleben.
+Jedes Paket erhält eine Stimme, ein „Cogito, ergo sum“:
+„Ich denke, also bin ich unterwegs.“
+Sapere aude! – Mut zum Denken
+Ganz im Sinne von Immanuel Kant:
+    „Sapere aude!“ – Wage es, weise zu sein!
+TBPT fordert dazu auf, neugierig und mutig durch die verborgenen Schichten des Netzwerks zu reisen, Fragen zu stellen, Zusammenhänge zu entdecken und das Unsichtbare sichtbar zu machen.
+Technik trifft Philosophie
+Die Visualisierung und Analyse von Netzwerkprotokollen wird so zu einer Reise durch einen symbolischen Kosmos, bei der Technik und Philosophie Hand in Hand gehen.
+TBPT ist Einladung und Werkzeug zugleich:
+    Für kreative Forscher:innen, die mehr als nur Bits und Bytes sehen wollen.
+    Für alle, die im Netzwerk das große Ganze und die kleinen Wunder entdecken möchten.
+TheBigPingTheory:
+Erlebe das Netzwerk als Kosmos.
+Stelle Fragen.
+Werde Teil der Reise.
 
     Visualisierung von Netzwerkprotokollen:
     Echtzeit-Darstellung von Paketen, Frames und Broadcasts für WiFi, Ethernet, HCI, ARP, ICMP, TCP, UDP.
-
     Interaktive Topologie-Ansicht:
     Dynamische Netzwerkgraphen mit Geräten, Routern, Switches und Verbindungen.
-
     Detaillierte Protokoll-Inspektion:
     Einzelansicht von Paketen mit Header, Payload, Adressen.
-
     Filter- und Suchfunktionen:
     Spezifische Protokoll- oder Geräte-Filter inklusive ID-/Vendor-Lookup.
-
     Lern- und Simulationsmodus:
     Schritt-für-Schritt-Animationen typischer Netzwerkabläufe (Ping, ARP, DHCP) mit erklärenden Kommentaren.
 
