@@ -112,7 +112,7 @@ Zielgruppen
 Technische Anforderungen
 
     Plattform: Desktop (Linux, macOS)
-    Programmiersprachen: Python+tkinter, C/C++, SQLAlchemy, 
+    Programmiersprachen: Python+tkinter,IDLE3, C/C++, SQLAlchemy, 
     TUI/CLI GUI, WebGL/Canvas für Web-Visualisierung
     
 Vision
