@@ -1,136 +1,130 @@
-import threading
-import datetime
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, LargeBinary, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import os
+import pathlib
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.exc import SQLAlchemyError
+
+# --- Models ---
+from sqlalchemy import (
+    Column, Integer, String, DateTime, Boolean, JSON, Text
+)
+from sqlalchemy.orm import declarative_base
+from datetime import datetime
 
 Base = declarative_base()
 
-class FileModel(Base):
-    __tablename__ = "files"
+class Scan(Base):
+    __tablename__ = 'scans'
     id = Column(Integer, primary_key=True)
-    filename = Column(String)
-    filetype = Column(String)
-    data = Column(LargeBinary)
-    timestamp = Column(String, default=lambda: datetime.datetime.now().isoformat())
+    scan_type = Column(String, nullable=False)   # 'wifi', 'bluetooth', 'eth', 'wps', ...
+    interface = Column(String, nullable=True)
+    channel = Column(Integer, nullable=True)
+    scan_time = Column(DateTime, default=datetime.utcnow)
+    result_file = Column(String, nullable=True)
+    result_data = Column(JSON, nullable=True)   # Parsed Scan Result als JSON
 
-class ScanModel(Base):
-    __tablename__ = "scans"
+class FileHash(Base):
+    __tablename__ = 'file_hashes'
     id = Column(Integer, primary_key=True)
-    scan_type = Column(String)
-    result_id = Column(Integer, ForeignKey("files.id"))
-    heuristik = Column(String)
-    timestamp = Column(String, default=lambda: datetime.datetime.now().isoformat())
-    file = relationship("FileModel")
+    filename = Column(String, unique=True, nullable=False)
+    sha256 = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-class QemuVMModel(Base):
-    __tablename__ = "qemu_vms"
+class Module(Base):
+    __tablename__ = 'modules'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    image_path = Column(String)
-    memory = Column(Integer)
-    cpus = Column(Integer)
-    net_mode = Column(String)
-    extra_args = Column(String)
-    status = Column(String)  # z.B. "gestartet", "gestoppt"
-    timestamp = Column(String, default=lambda: datetime.datetime.now().isoformat())
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    github_url = Column(String, nullable=True)
+    enabled = Column(Boolean, default=True)
 
+# --- DB-Setup (thread-sicher) ---
+BASE_DIR = pathlib.Path(__file__).resolve().parent
+DB_PATH = os.getenv("TEAS_DB_PATH", str(BASE_DIR / "teasesraect.db"))
+
+engine = create_engine(
+    f"sqlite:///{DB_PATH}",
+    connect_args={"check_same_thread": False}
+)
+SessionLocal = scoped_session(sessionmaker(bind=engine))
+
+def get_session():
+    """Gibt eine neue, thread-lokale Session zurück."""
+    return SessionLocal()
+
+# --- DB-Manager ---
 class DBManager:
-    def __init__(self, db_url="sqlite:///durga.db"):
-        self.engine = create_engine(db_url, echo=False)
-        Base.metadata.create_all(self.engine)
-        self.Session = sessionmaker(bind=self.engine)
-        self.lock = threading.Lock()
+    def __init__(self):
+        Base.metadata.create_all(engine)
 
-    def add_file(self, filename, data, filetype=None):
-        with self.lock:
-            session = self.Session()
-            file_entry = FileModel(filename=filename, data=data, filetype=filetype)
-            session.add(file_entry)
+    def add_scan(self, **kwargs):
+        session = get_session()
+        try:
+            scan = Scan(**kwargs)
+            session.add(scan)
             session.commit()
-            file_id = file_entry.id
+            return scan.id
+        except SQLAlchemyError as e:
+            session.rollback()
+            print("Fehler beim Hinzufügen des Scans:", e)
+        finally:
             session.close()
-        return file_id
 
-    def add_scan(self, scan_type, file_id, heuristik):
-        with self.lock:
-            session = self.Session()
-            scan_entry = ScanModel(scan_type=scan_type, result_id=file_id, heuristik=heuristik)
-            session.add(scan_entry)
+    def add_file_hash(self, filename, sha256):
+        session = get_session()
+        try:
+            file_hash = FileHash(filename=filename, sha256=sha256)
+            session.add(file_hash)
             session.commit()
-            scan_id = scan_entry.id
+            return file_hash.id
+        except SQLAlchemyError as e:
+            session.rollback()
+            print("Fehler beim Hinzufügen des FileHash:", e)
+        finally:
             session.close()
-        return scan_id
+
+    def add_module(self, name, description=None, github_url=None, enabled=True):
+        session = get_session()
+        try:
+            module = Module(name=name, description=description, github_url=github_url, enabled=enabled)
+            session.add(module)
+            session.commit()
+            return module.id
+        except SQLAlchemyError as e:
+            session.rollback()
+            print("Fehler beim Hinzufügen des Moduls:", e)
+        finally:
+            session.close()
 
     def get_latest_scans(self, limit=10):
-        with self.lock:
-            session = self.Session()
-            scans = session.query(ScanModel).order_by(ScanModel.timestamp.desc()).limit(limit).all()
-            session.close()
-        return scans
-
-    def add_qemu_vm(self, name, image_path, memory, cpus, net_mode, extra_args, status="gestoppt"):
-        with self.lock:
-            session = self.Session()
-            vm_entry = QemuVMModel(
-                name=name,
-                image_path=image_path,
-                memory=memory,
-                cpus=cpus,
-                net_mode=net_mode,
-                extra_args=extra_args,
-                status=status
-            )
-            session.add(vm_entry)
-            session.commit()
-            vm_id = vm_entry.id
-            session.close()
-        return vm_id
-
-    def update_qemu_vm_status(self, vm_id, status):
-        with self.lock:
-            session = self.Session()
-            vm = session.query(QemuVMModel).filter_by(id=vm_id).first()
-            if vm:
-                vm.status = status
-                session.commit()
+        session = get_session()
+        try:
+            return session.query(Scan).order_by(Scan.scan_time.desc()).limit(limit).all()
+        finally:
             session.close()
 
-    def get_all_qemu_vms(self):
-        with self.lock:
-            session = self.Session()
-            vms = session.query(QemuVMModel).all()
+    def get_enabled_modules(self):
+        session = get_session()
+        try:
+            return session.query(Module).filter_by(enabled=True).all()
+        finally:
             session.close()
-        return vms
 
-    # Beispiel für parallele Datei-Uploads (multithreaded)
-    def threaded_file_upload(self, filename, data, filetype=None):
-        def worker():
-            file_id = self.add_file(filename, data, filetype)
-            print(f"[Thread-{threading.current_thread().name}] Datei {filename} gespeichert (ID: {file_id})")
-        t = threading.Thread(target=worker)
-        t.start()
-        return t
-
-# Beispielnutzung:
+# --- Beispielnutzung ---
 if __name__ == "__main__":
     dbm = DBManager()
-    # Beispiel: Datei speichern (multithreaded)
-    threads = []
-    for i in range(3):
-        fname = f"testfile_{i}.txt"
-        data = f"Testinhalt {i}".encode()
-        t = dbm.threaded_file_upload(fname, data, filetype="text/plain")
-        threads.append(t)
-    for t in threads:
-        t.join()
-    # Beispiel: QEMU-VM speichern
-    vm_id = dbm.add_qemu_vm(
-        name="testbot",
-        image_path="/pfad/zu/image.qcow2",
-        memory=256,
-        cpus=1,
-        net_mode="user",
-        extra_args="",
-        status="gestoppt"
-    )
-    print("Alle VMs:", dbm.get_all_qemu_vms())
+    # Beispiel: Scan hinzufügen
+    scan_id = dbm.add_scan(scan_type="wifi", interface="wlan0", channel=6, result_file="scan1.json", result_data={"networks": []})
+    print("Neuer Scan:", scan_id)
+    # Beispiel: FileHash hinzufügen
+    hash_id = dbm.add_file_hash(filename="scan1.json", sha256="abc123...")
+    print("Neuer FileHash:", hash_id)
+    # Beispiel: Modul hinzufügen
+    mod_id = dbm.add_module(name="wifi_scanner", description="Scannt WLAN-Netze", github_url="https://github.com/example/wifi_scanner")
+    print("Neues Modul:", mod_id)
+    # Letzte Scans anzeigen
+    for scan in dbm.get_latest_scans():
+        print(scan.id, scan.scan_type, scan.interface, scan.scan_time)
+    # Aktivierte Module anzeigen
+    for mod in dbm.get_enabled_modules():
+        print(mod.id, mod.name, mod.enabled)
