@@ -21,11 +21,10 @@ Jedes Datenpaket erhält eine Stimme,ein „Cogito, ergo movio, et representatum
 
 Getreu dem Motto von Kant „Sapere aude!“ – „Wage es, weise zu sein!“ – fordert TBPT dazu auf, sich mutig und neugierig durch die verborgenen Schichten des
 Netzwerks zu begeben und die Frage auf zu werfen:
+Was sind meine Information, wiso sind sie und damit ich perspecktivisch, warum erzeugt BIG oder LITTLE DATA solche funktionen,
+    letztlich ist alles und jeder und damit einfach Alles 
     
-    Was sind meine Information, wiso sind sie und damit ich perspecktivisch, warum macht BIG DATA solche funktionen denn, letztlich ist alles und jeder ein
-    Netzwerk und damit einfach Alles ein 
-                                        
-                                        NETZWERK
+                                                EIN NETZWERK
 
 Die Visualisierung und Analyse von Netzwerkprotokollen und den darin enthalten "Informationen" oder wie ich jetzt sage Bodys,
 wird so zu einer Reise durch einen symbolischen Kosmos, bei der Technik und Philosophie Hand in Hand gehen.
@@ -34,11 +33,13 @@ sondern aktiv bauen und deren Verhalten nachvollziehen.
 
 Kernansatz und Technologien
 
-    Hardware-nahe Integration: Viele Module sind in C/C++ für hohe Performance entwickelt und werden über Python3-Funktionen nutzbar gemacht.
-    Open-Source Tools: Integration von EtherApe Sparrow-wifi und Aircrack-ng und Hashcat(und openMinD)
-    
-    ermöglicht praxisnahe Simulationen von WPA2-Handshakes und Passwort-Cracking.
-    Flexible Packet-Engines: Scapy und airopy erlauben individuelle Paketgenerierung, Manipulation und Echtzeit-Visualisierung.
+    Hardware-nahe Integration: Viele Module sind in C/C++ für hohe Performance entwickelt
+    und werden über Python3-Funktionen nutzbar gemacht.
+    Open-Source Tools: Integration von EtherApe Sparrow-wifi und
+    Aircrack-ng und Hashcat(und openMinD)
+    ermöglichen praxisnahe Simulationen von WPA2-Handshakes und Passwort-Cracking.
+    Flexible Packet-Engines: Scapy und airopy erlauben individuelle Paketgenerierung,
+    Manipulation und Echtzeit-Visualisierung.
     KI-Unterstützung: Ein trainierbares PyTorch-Modell mit MD/CSV-Import verbessert Analysen und Mustererkennung.
 
 Hauptfunktionen
@@ -80,7 +81,8 @@ Werde Teil der Reise.
 
 Architektur und Komponentenbeschreibung 
 
-        Packet Sniffer	    Erfasst Netzwerkverkehr (z.B. via pcap oder SQLAlchemy) und extrahiert relevante Protokolldaten (MAC, IP, Ping, HCI-Status etc.)
+        Packet Sniffer	    Erfasst Netzwerkverkehr (z.B. via pcap oder SQLAlchemy)
+                            und extrahiert relevante Protokolldaten (MAC, IP, Ping, HCI-Status etc.)
         Parser-Engine	    Analysiert und dekodiert Protokollheader (WiFi, Ethernet, ARP, ICMP, HCI etc.)
         Visualyzer	        Erzeugt aus der Datenflut interaktive Netzwerk-Topologien und Darstellungen
         Simulationsmodul	Erzeugt und erklärt typische Netzwerkabläufe (Ping, ARP, DHCP etc.)
@@ -95,20 +97,16 @@ Beispiel-Workflows
 
     WiFi- und Ethernet-Frame-Flow:
     Veranschaulicht Übertragung und Adressierung von Datenpaketen in kabelgebundenen und drahtlosen Netzwerken.
-
+    
     Malware- und Kryptoanalyse:
     (Zukünftige Module) Analyse von Schadsoftwarekommunikation und Kryptographieprozessen.
 
 Zielgruppen
 
     Netzwerk- und Sicherheitsadministratoren
-
     IT-Studierende und Auszubildende
-
     Entwickler und Sicherheitsteams
-
     Lehrende im Bereich Netzwerktechnik und Cybersecurity
-
     Red/Blue-Teaming und Social Engineering Experten
 
 Technische Anforderungen
