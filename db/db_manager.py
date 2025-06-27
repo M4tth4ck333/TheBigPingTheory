@@ -1,62 +1,136 @@
-import os
-import shutil
-import pathlib
-from contextlib import contextmanager
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.exc import SQLAlchemyError
+import threading
+import datetime
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, LargeBinary, ForeignKey
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
-BASE_DIR = pathlib.Path(__file__).resolve().parent
-DB_PATH = os.getenv("TEAS_DB_PATH", str(BASE_DIR / "teasesraect.db"))
+Base = declarative_base()
+
+class FileModel(Base):
+    __tablename__ = "files"
+    id = Column(Integer, primary_key=True)
+    filename = Column(String)
+    filetype = Column(String)
+    data = Column(LargeBinary)
+    timestamp = Column(String, default=lambda: datetime.datetime.now().isoformat())
+
+class ScanModel(Base):
+    __tablename__ = "scans"
+    id = Column(Integer, primary_key=True)
+    scan_type = Column(String)
+    result_id = Column(Integer, ForeignKey("files.id"))
+    heuristik = Column(String)
+    timestamp = Column(String, default=lambda: datetime.datetime.now().isoformat())
+    file = relationship("FileModel")
+
+class QemuVMModel(Base):
+    __tablename__ = "qemu_vms"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    image_path = Column(String)
+    memory = Column(Integer)
+    cpus = Column(Integer)
+    net_mode = Column(String)
+    extra_args = Column(String)
+    status = Column(String)  # z.B. "gestartet", "gestoppt"
+    timestamp = Column(String, default=lambda: datetime.datetime.now().isoformat())
 
 class DBManager:
-    def __init__(self, db_path=DB_PATH):
-        self.db_path = db_path
-        self.engine = create_engine(f"sqlite:///{self.db_path}", connect_args={"check_same_thread": False})
-        self.SessionLocal = scoped_session(sessionmaker(bind=self.engine))
+    def __init__(self, db_url="sqlite:///durga.db"):
+        self.engine = create_engine(db_url, echo=False)
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.lock = threading.Lock()
 
-    def init_db(self, base):
-        """Initialisiert die DB-Struktur (alle Tabellen) anhand des gegebenen Base (declarative_base)."""
-        base.metadata.create_all(self.engine)
-
-    @contextmanager
-    def get_session(self):
-        """Contextmanager für Session, sorgt für Commit/Rollback und schließt Session."""
-        session = self.SessionLocal()
-        try:
-            yield session
+    def add_file(self, filename, data, filetype=None):
+        with self.lock:
+            session = self.Session()
+            file_entry = FileModel(filename=filename, data=data, filetype=filetype)
+            session.add(file_entry)
             session.commit()
-        except SQLAlchemyError:
-            session.rollback()
-            raise
-        finally:
+            file_id = file_entry.id
+            session.close()
+        return file_id
+
+    def add_scan(self, scan_type, file_id, heuristik):
+        with self.lock:
+            session = self.Session()
+            scan_entry = ScanModel(scan_type=scan_type, result_id=file_id, heuristik=heuristik)
+            session.add(scan_entry)
+            session.commit()
+            scan_id = scan_entry.id
+            session.close()
+        return scan_id
+
+    def get_latest_scans(self, limit=10):
+        with self.lock:
+            session = self.Session()
+            scans = session.query(ScanModel).order_by(ScanModel.timestamp.desc()).limit(limit).all()
+            session.close()
+        return scans
+
+    def add_qemu_vm(self, name, image_path, memory, cpus, net_mode, extra_args, status="gestoppt"):
+        with self.lock:
+            session = self.Session()
+            vm_entry = QemuVMModel(
+                name=name,
+                image_path=image_path,
+                memory=memory,
+                cpus=cpus,
+                net_mode=net_mode,
+                extra_args=extra_args,
+                status=status
+            )
+            session.add(vm_entry)
+            session.commit()
+            vm_id = vm_entry.id
+            session.close()
+        return vm_id
+
+    def update_qemu_vm_status(self, vm_id, status):
+        with self.lock:
+            session = self.Session()
+            vm = session.query(QemuVMModel).filter_by(id=vm_id).first()
+            if vm:
+                vm.status = status
+                session.commit()
             session.close()
 
-    def backup_db(self, backup_dir=None):
-        """Erstellt eine Sicherungskopie der SQLite-Datei."""
-        backup_dir = backup_dir or (BASE_DIR / "backups")
-        os.makedirs(backup_dir, exist_ok=True)
-        backup_file = pathlib.Path(backup_dir) / f"backup_{pathlib.Path(self.db_path).stem}_{int(os.times().elapsed)}.db"
-        shutil.copy2(self.db_path, backup_file)
-        return backup_file
+    def get_all_qemu_vms(self):
+        with self.lock:
+            session = self.Session()
+            vms = session.query(QemuVMModel).all()
+            session.close()
+        return vms
 
-    def cleanup_sessions(self):
-        """Kann genutzt werden, um Sessions oder temporäre DB-Ressourcen zu bereinigen (Platzhalter)."""
-        pass
+    # Beispiel für parallele Datei-Uploads (multithreaded)
+    def threaded_file_upload(self, filename, data, filetype=None):
+        def worker():
+            file_id = self.add_file(filename, data, filetype)
+            print(f"[Thread-{threading.current_thread().name}] Datei {filename} gespeichert (ID: {file_id})")
+        t = threading.Thread(target=worker)
+        t.start()
+        return t
 
-    def drop_all(self, base):
-        """Löscht alle Tabellen (nur für Entwicklungszwecke)."""
-        base.metadata.drop_all(self.engine)
-
-# Beispiel, wie man es später nutzt:
-
-# from models import Base
-# dbm = DBManager()
-# dbm.init_db(Base)
-
-# with dbm.get_session() as session:
-#     # DB Operationen
-#     pass
-
-# backup = dbm.backup_db()
-# print(f"Backup gespeichert unter: {backup}")
+# Beispielnutzung:
+if __name__ == "__main__":
+    dbm = DBManager()
+    # Beispiel: Datei speichern (multithreaded)
+    threads = []
+    for i in range(3):
+        fname = f"testfile_{i}.txt"
+        data = f"Testinhalt {i}".encode()
+        t = dbm.threaded_file_upload(fname, data, filetype="text/plain")
+        threads.append(t)
+    for t in threads:
+        t.join()
+    # Beispiel: QEMU-VM speichern
+    vm_id = dbm.add_qemu_vm(
+        name="testbot",
+        image_path="/pfad/zu/image.qcow2",
+        memory=256,
+        cpus=1,
+        net_mode="user",
+        extra_args="",
+        status="gestoppt"
+    )
+    print("Alle VMs:", dbm.get_all_qemu_vms())
