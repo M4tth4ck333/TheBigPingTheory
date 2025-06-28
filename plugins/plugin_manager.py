@@ -8,7 +8,7 @@ class MetaPluginInspector(GUIStreamPluginBase):
     type = "meta"
     stream_type = "meta"
     description = "Visualisiert und inspiziert alle geladenen Plugins – ein Plugin für Plugins."
-    author = "DURGA Team"
+    author = "m4tt~h4ck"
     version = "1.0"
 
     def __init__(self):
