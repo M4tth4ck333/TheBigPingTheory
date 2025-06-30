@@ -22,7 +22,7 @@ Jedes Datenpaket erhält eine Stimme,ein „Cogito, ergo movio, et representatum
 Getreu dem Motto von Kant „Sapere aude!“ – „Wage es, weise zu sein!“ – fordert TBPT dazu auf, sich mutig und neugierig durch die verborgenen Schichten des
 Netzwerks zu begeben und die Frage auf zu werfen:
 Was sind meine Information, wiso sind sie und damit ich perspecktivisch, warum erzeugt BIG oder LITTLE DATA solche funktionen,
-    letztlich ist alles und jeder und damit einfach Alles 
+    letztlich ist alles und jeder einfach
     
                                                 EIN NETZWERK
 
