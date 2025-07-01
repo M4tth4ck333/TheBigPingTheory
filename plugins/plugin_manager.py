@@ -1,89 +1,466 @@
-# plugins/meta_plugin_inspector.py
+# plugins/jan_eye_report_viewer.py
+
 
 import tkinter as tk
+
+from tkinter import ttk
+
 from plugins.gui_stream_base import GUIStreamPluginBase
 
-class MetaPluginInspector(GUIStreamPluginBase):
-    name = "Meta Plugin Inspector"
-    type = "meta"
-    stream_type = "meta"
-    description = "Visualisiert und inspiziert alle geladenen Plugins – ein Plugin für Plugins."
-    author = "m4tt~h4ck"
-    version = "1.0"
+# Importieren Sie den DBManager aus dem zentralen Tesseract-Backend
 
-    def __init__(self):
-        super().__init__()
-        self.plugin_manager = None  # Wird später gesetzt
+# Annahme: Ihr DBManager ist in einem Pfad wie 'tesseract_core.db_manager' verfügbar
 
-    def create_gui(self, parent):
-        frame = super().create_gui(parent)
-        self.title_label = tk.Label(frame, text="Geladene Plugins:", fg="#00FFCC", bg="#222222", font=("Consolas", 14, "bold"))
-        self.title_label.pack(pady=(10, 5))
+# Für diesen Beispielcode wird ein direkter Import angenommen.
 
-        self.listbox = tk.Listbox(frame, bg="#181818", fg="#00FF00", font=("Consolas", 11), width=60, height=10)
-        self.listbox.pack(padx=10, pady=5)
+from db_manager_updated import DBManager, CodeAnalysisReport, Module, FileHash 
 
-        self.meta_label = tk.Label(frame, text="Metadaten:", fg="#FF00FF", bg="#222222", font=("Consolas", 11))
-        self.meta_label.pack(pady=(10, 2))
-        self.meta_text = tk.Text(frame, bg="#181818", fg="#FFFFFF", height=6, width=60, state="disabled", font=("Consolas", 10))
-        self.meta_text.pack(padx=10, pady=(0,10))
 
-        self.listbox.bind("<<ListboxSelect>>", self.on_select)
-        return frame
+class JanEyeReportViewer(GUIStreamPluginBase):
 
-    def update_gui(self, data=None):
-        if not self.plugin_manager:
-            return
-        self.listbox.delete(0, tk.END)
-        for pname, plugin in self.plugin_manager.plugins.items():
-            self.listbox.insert(tk.END, f"{plugin.name} [{plugin.type}]")
+name = "Jan's Eye Reports"
 
-    def on_select(self, event):
-        if not self.plugin_manager:
-            return
-        selection = self.listbox.curselection()
-        if not selection:
-            return
-        idx = selection[0]
-        pname = list(self.plugin_manager.plugins.keys())[idx]
-        plugin = self.plugin_manager.plugins[pname]
-        meta = (
-            f"Name: {plugin.name}\n"
-            f"Typ: {plugin.type}\n"
-            f"Beschreibung: {plugin.description}\n"
-            f"Autor: {getattr(plugin, 'author', 'unbekannt')}\n"
-            f"Version: {getattr(plugin, 'version', 'unbekannt')}\n"
-            f"Aktiviert: {getattr(plugin, 'enabled', True)}"
-        )
-        self.meta_text.config(state="normal")
-        self.meta_text.delete(1.0, tk.END)
-        self.meta_text.insert(tk.END, meta)
-        self.meta_text.config(state="disabled")
+type = "analysis"
 
-    def run(self, plugin_manager=None):
-        """
-        Setzt den PluginManager und aktualisiert die GUI.
-        """
-        self.plugin_manager = plugin_manager
-        if self.gui_frame:
-            self.update_gui()
+stream_type = "report"
 
-# --- Beispiel für die Einbindung in die Hauptanwendung ---
+description = "Zeigt Code-Analyseberichte von Jan's Eye an."
+
+author = "m4tt~h4ck"
+
+version = "1.0"
+
+
+def __init__(self):
+
+super().__init__()
+
+self.db_manager = DBManager() # Instanz des DBManager
+
+self.reports = [] # Liste zum Speichern der abgerufenen Berichte
+
+
+def create_gui(self, parent):
+
+"""
+
+Erstellt die GUI-Elemente für das Jan's Eye Report Viewer Plugin.
+
+"""
+
+frame = super().create_gui(parent) # Basis-Frame von GUIStreamPluginBase
+
+
+self.title_label = tk.Label(frame, text="Jan's Eye Code-Analyseberichte:", 
+
+fg="#FFD700", bg="#222222", font=("Consolas", 14, "bold"))
+
+self.title_label.pack(pady=(10, 5))
+
+
+# Treeview für die Berichtsübersicht
+
+self.report_tree = ttk.Treeview(frame, 
+
+columns=("ID", "Module", "File", "Status", "Time", "Summary"), 
+
+show="headings", 
+
+height=10)
+
+# Spaltenüberschriften definieren
+
+self.report_tree.heading("ID", text="ID", anchor=tk.W)
+
+self.report_tree.heading("Module", text="Modul", anchor=tk.W)
+
+self.report_tree.heading("File", text="Datei", anchor=tk.W)
+
+self.report_tree.heading("Status", text="Status", anchor=tk.W)
+
+self.report_tree.heading("Time", text="Zeit", anchor=tk.W)
+
+self.report_tree.heading("Summary", text="Zusammenfassung", anchor=tk.W)
+
+
+# Spaltenbreiten anpassen
+
+self.report_tree.column("ID", width=40, stretch=tk.NO)
+
+self.report_tree.column("Module", width=120, stretch=tk.NO)
+
+self.report_tree.column("File", width=120, stretch=tk.NO)
+
+self.report_tree.column("Status", width=80, stretch=tk.NO)
+
+self.report_tree.column("Time", width=150, stretch=tk.NO)
+
+self.report_tree.column("Summary", width=300, stretch=tk.YES)
+
+
+self.report_tree.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+
+
+# Scrollbar für die Treeview
+
+scrollbar = ttk.Scrollbar(frame, orient="vertical", command=self.report_tree.yview)
+
+self.report_tree.configure(yscrollcommand=scrollbar.set)
+
+scrollbar.pack(side="right", fill="y")
+
+
+# Detailansicht für Findings
+
+self.detail_label = tk.Label(frame, text="Detaillierte Findings:", 
+
+fg="#00FFFF", bg="#222222", font=("Consolas", 11))
+
+self.detail_label.pack(pady=(10, 2))
+
+self.detail_text = tk.Text(frame, bg="#181818", fg="#FFFFFF", height=8, width=80, 
+
+state="disabled", font=("Consolas", 10))
+
+self.detail_text.pack(padx=10, pady=(0,10), fill=tk.BOTH, expand=True)
+
+
+# Bindung für die Auswahl in der Treeview
+
+self.report_tree.bind("<<TreeviewSelect>>", self.on_report_select)
+
+
+# Refresh Button
+
+self.refresh_button = tk.Button(frame, text="Berichte aktualisieren", 
+
+command=self.update_gui, 
+
+bg="#0066CC", fg="white", font=("Consolas", 10, "bold"),
+
+relief=tk.RAISED, bd=2, padx=5, pady=2)
+
+self.refresh_button.pack(pady=5)
+
+
+return frame
+
+
+def update_gui(self, data=None):
+
+"""
+
+Aktualisiert die Anzeige der Berichte in der GUI.
+
+"""
+
+self.report_tree.delete(*self.report_tree.get_children()) # Vorherige Einträge löschen
+
+self.reports = self.db_manager.get_code_analysis_reports(limit=50) # Die neuesten 50 Berichte abrufen
+
+
+if not self.reports:
+
+self.report_tree.insert("", tk.END, values=("", "", "", "", "", "Keine Berichte gefunden."))
+
+return
+
+
+for report in self.reports:
+
+module_name = "N/A"
+
+file_name = "N/A"
+
+
+# Versuchen, den Modulnamen abzurufen
+
+if report.module_id:
+
+# Hier muss man eine Session für die Beziehung öffnen, da die ursprüngliche Session geschlossen ist
+
+session = self.db_manager.get_session() 
+
+try:
+
+module = session.query(Module).filter_by(id=report.module_id).first()
+
+if module:
+
+module_name = module.name
+
+except SQLAlchemyError as e:
+
+print(f"Fehler beim Abrufen des Moduls für Bericht {report.id}: {e}")
+
+finally:
+
+session.close()
+
+
+# Versuchen, den Dateinamen abzurufen
+
+if report.file_hash_id:
+
+session = self.db_manager.get_session()
+
+try:
+
+file_hash_entry = session.query(FileHash).filter_by(id=report.file_hash_id).first()
+
+if file_hash_entry:
+
+file_name = file_hash_entry.filename
+
+except SQLAlchemyError as e:
+
+print(f"Fehler beim Abrufen des FileHash für Bericht {report.id}: {e}")
+
+finally:
+
+session.close()
+
+self.report_tree.insert("", tk.END, 
+
+values=(report.id, module_name, file_name, report.status, 
+
+report.analysis_time.strftime('%Y-%m-%d %H:%M:%S'), 
+
+report.summary))
+
+# Detailansicht leeren
+
+self.detail_text.config(state="normal")
+
+self.detail_text.delete(1.0, tk.END)
+
+self.detail_text.config(state="disabled")
+
+
+
+def on_report_select(self, event):
+
+"""
+
+Wird aufgerufen, wenn ein Bericht in der Treeview ausgewählt wird.
+
+Zeigt die detaillierten Findings an.
+
+"""
+
+selected_item = self.report_tree.focus()
+
+if not selected_item:
+
+return
+
+
+item_values = self.report_tree.item(selected_item, 'values')
+
+if not item_values:
+
+return
+
+
+report_id = int(item_values[0]) # Die ID des ausgewählten Berichts
+
+
+# Den vollständigen Bericht aus der Liste der abgerufenen Berichte finden
+
+selected_report = next((r for r in self.reports if r.id == report_id), None)
+
+
+if selected_report and selected_report.findings:
+
+findings_str = ""
+
+for finding in selected_report.findings:
+
+findings_str += f"Type: {finding.get('type', 'N/A')}\n"
+
+findings_str += f"Location: {finding.get('location', 'N/A')}\n"
+
+findings_str += f"Detail: {finding.get('detail', 'N/A')}\n\n"
+
+self.detail_text.config(state="normal")
+
+self.detail_text.delete(1.0, tk.END)
+
+self.detail_text.insert(tk.END, findings_str.strip())
+
+self.detail_text.config(state="disabled")
+
+else:
+
+self.detail_text.config(state="normal")
+
+self.detail_text.delete(1.0, tk.END)
+
+self.detail_text.insert(tk.END, "Keine detaillierten Findings verfügbar.")
+
+self.detail_text.config(state="disabled")
+
+
+def run(self, **kwargs):
+
+"""
+
+Startet das Plugin und aktualisiert die GUI.
+
+"""
+
+if self.gui_frame:
+
+self.update_gui()
+
+
+# --- Beispiel für die Einbindung in die Hauptanwendung (für Testzwecke) ---
 
 if __name__ == "__main__":
-    # Annahme: PluginManager und Tkinter-App existieren bereits
-    import tkinter as tk
-    from plugins.plugin_manager import PluginManager
 
-    root = tk.Tk()
-    root.title("Meta Plugin Inspector Demo")
-    pm = PluginManager()
-    pm.load_plugins()
+# Dies ist ein eigenständiger Testlauf für das Plugin.
 
-    plugin = MetaPluginInspector()
-    plugin.run(plugin_manager=pm)
-    frame = plugin.create_gui(root)
-    frame.pack(fill=tk.BOTH, expand=True)
-    plugin.update_gui()
+# In der echten Tesseract-Anwendung würde es vom Haupt-Metavisualizer geladen.
 
-    root.mainloop()
+root = tk.Tk()
+
+root.title("Jan's Eye Report Viewer Demo")
+
+root.geometry("900x600")
+
+root.configure(bg="#111111") # Dunkler Hintergrund für Cyber-Look
+
+
+# Dummy-Daten für den DBManager erstellen, falls nicht vorhanden
+
+db_manager_instance = DBManager()
+
+# Sicherstellen, dass Module und FileHashes für die Verknüpfung existieren
+
+module_name_1 = "core_system"
+
+module_name_2 = "network_scanner"
+
+file_name_1 = "main_loop.py"
+
+file_name_2 = "packet_parser.py"
+
+
+mod1 = db_manager_instance.get_module_by_name(module_name_1)
+
+if not mod1:
+
+db_manager_instance.add_module(name=module_name_1, description="Kernsystem-Module")
+
+mod1 = db_manager_instance.get_module_by_name(module_name_1)
+
+
+mod2 = db_manager_instance.get_module_by_name(module_name_2)
+
+if not mod2:
+
+db_manager_instance.add_module(name=module_name_2, description="Netzwerk-Scanner-Modul")
+
+mod2 = db_manager_instance.get_module_by_name(module_name_2)
+
+
+file1 = db_manager_instance.get_file_hash_by_filename(file_name_1)
+
+if not file1:
+
+db_manager_instance.add_file_hash(filename=file_name_1, sha256="hash123abc")
+
+file1 = db_manager_instance.get_file_hash_by_filename(file_name_1)
+
+
+file2 = db_manager_instance.get_file_hash_by_filename(file_name_2)
+
+if not file2:
+
+db_manager_instance.add_file_hash(filename=file_name_2, sha256="hash456def")
+
+file2 = db_manager_instance.get_file_hash_by_filename(file_name_2)
+
+
+# Fügen Sie einige Dummy-Berichte hinzu, wenn die DB leer ist
+
+if not db_manager_instance.get_code_analysis_reports(limit=1):
+
+db_manager_instance.add_code_analysis_report(
+
+module_id=mod1.id,
+
+file_hash_id=file1.id,
+
+status="completed",
+
+summary="Kritische Schwachstelle in Authentifizierungslogik gefunden.",
+
+findings=[
+
+{"type": "vulnerability", "location": "auth.py:45", "detail": "SQL Injection in Login-Funktion"},
+
+{"type": "recommendation", "location": "auth.py", "detail": "Parameterisierte Queries verwenden"}
+
+],
+
+ai_model_version="Jan's Eye v0.2-beta"
+
+)
+
+db_manager_instance.add_code_analysis_report(
+
+module_id=mod2.id,
+
+file_hash_id=file2.id,
+
+status="in_progress",
+
+summary="Analyse des Netzwerk-Scanners läuft: Potenzielle DoS-Vektoren.",
+
+findings=[
+
+{"type": "potential_dos", "location": "scanner.py:120", "detail": "Unbegrenzte Schleife bei Paketverarbeitung"},
+
+{"type": "info", "location": "config.py", "detail": "Verwendet Standard-Port 8080"}
+
+],
+
+ai_model_version="Jan's Eye v0.2-beta"
+
+)
+
+db_manager_instance.add_code_analysis_report(
+
+file_hash_id=file1.id,
+
+status="failed",
+
+summary="Analyse von main_loop.py fehlgeschlagen: Syntaxfehler.",
+
+findings=[
+
+{"type": "error", "location": "main_loop.py:10", "detail": "Unexpected indent"}
+
+],
+
+ai_model_version="Jan's Eye v0.2-beta"
+
+)
+
+
+viewer_plugin = JanEyeReportViewer()
+
+frame = viewer_plugin.create_gui(root)
+
+frame.pack(fill=tk.BOTH, expand=True)
+
+
+# Initialen GUI-Update aufrufen
+
+viewer_plugin.update_gui()
+
+
+root.mainloop()
+
+
