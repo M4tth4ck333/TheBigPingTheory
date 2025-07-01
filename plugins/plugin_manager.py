@@ -1,61 +1,41 @@
 # plugins/jan_eye_report_viewer.py
 
-
 import tkinter as tk
-
 from tkinter import ttk
-
 from plugins.gui_stream_base import GUIStreamPluginBase
 
 # Importieren Sie den DBManager aus dem zentralen Tesseract-Backend
-
 # Annahme: Ihr DBManager ist in einem Pfad wie 'tesseract_core.db_manager' verfügbar
-
 # Für diesen Beispielcode wird ein direkter Import angenommen.
 
 from db_manager_updated import DBManager, CodeAnalysisReport, Module, FileHash 
 
 
 class JanEyeReportViewer(GUIStreamPluginBase):
+	name = "Jan's Eye Reports"
+	type = "analysis"
+	stream_type = "report"
+	description = "Zeigt Code-Analyseberichte von Jan's Eye an."
+	author = "m4tt~h4ck"
+	version = "1.0"
 
-name = "Jan's Eye Reports"
-
-type = "analysis"
-
-stream_type = "report"
-
-description = "Zeigt Code-Analyseberichte von Jan's Eye an."
-
-author = "m4tt~h4ck"
-
-version = "1.0"
-
-
-def __init__(self):
-
-super().__init__()
-
-self.db_manager = DBManager() # Instanz des DBManager
-
-self.reports = [] # Liste zum Speichern der abgerufenen Berichte
+	def __init__(self):
+		super().__init__():
+		self.db_manager = DBManager() # Instanz des DBManager
+		self.reports = [] # Liste zum Speichern der abgerufenen Berichte
 
 
-def create_gui(self, parent):
+	def create_gui(self, parent):
 
-"""
+	"""
 
-Erstellt die GUI-Elemente für das Jan's Eye Report Viewer Plugin.
+	Erstellt die GUI-Elemente für das Jan's Eye Report Viewer Plugin.
 
-"""
+	"""
 
-frame = super().create_gui(parent) # Basis-Frame von GUIStreamPluginBase
-
-
-self.title_label = tk.Label(frame, text="Jan's Eye Code-Analyseberichte:", 
-
-fg="#FFD700", bg="#222222", font=("Consolas", 14, "bold"))
-
-self.title_label.pack(pady=(10, 5))
+		frame = super().create_gui(parent) # Basis-Frame von GUIStreamPluginBase
+		self.title_label = tk.Label(frame, text="Jan's Eye Code-Analyseberichte:", fg="#FFD700", bg="#222222", font=("Consolas", 14, "bold"))
+		self.title_label.pack(pady=(10, 5))
 
 
 # Treeview für die Berichtsübersicht
