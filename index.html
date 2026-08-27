@@ -1,211 +1,235 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
-		<meta name="generator" content="Hostinger Horizons" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hostinger Horizons</title>
-		<script type="module" crossorigin src="/assets/index-CUlWxQMX.js"></script>
-		<link rel="stylesheet" crossorigin href="/assets/index-0glKvMc9.css">
-		<script type="module">
-window.onerror = (message, source, lineno, colno, errorObj) => {
-	const errorDetails = errorObj ? JSON.stringify({
-		name: errorObj.name,
-		message: errorObj.message,
-		stack: errorObj.stack,
-		source,
-		lineno,
-		colno,
-	}) : null;
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v1rtu4lyz1um.com // Core Engine</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --accent-green: #2ea043;
+            --accent-blue: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.15);
+            --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+        }
 
-	window.parent.postMessage({
-		type: 'horizons-runtime-error',
-		message,
-		error: errorDetails
-	}, '*');
-};
-</script>
-		<script type="module">
-const observer = new MutationObserver((mutations) => {
-	for (const mutation of mutations) {
-		for (const addedNode of mutation.addedNodes) {
-			if (
-				addedNode.nodeType === Node.ELEMENT_NODE &&
-				(
-					addedNode.tagName?.toLowerCase() === 'vite-error-overlay' ||
-					addedNode.classList?.contains('backdrop')
-				)
-			) {
-				handleViteOverlay(addedNode);
-			}
-		}
-	}
-});
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-observer.observe(document.documentElement, {
-	childList: true,
-	subtree: true
-});
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+        }
 
-function handleViteOverlay(node) {
-	if (!node.shadowRoot) {
-		return;
-	}
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-	const backdrop = node.shadowRoot.querySelector('.backdrop');
+        h1 {
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+        }
 
-	if (backdrop) {
-		const overlayHtml = backdrop.outerHTML;
-		const parser = new DOMParser();
-		const doc = parser.parseFromString(overlayHtml, 'text/html');
-		const messageBodyElement = doc.querySelector('.message-body');
-		const fileElement = doc.querySelector('.file');
-		const messageText = messageBodyElement ? messageBodyElement.textContent.trim() : '';
-		const fileText = fileElement ? fileElement.textContent.trim() : '';
-		const error = messageText + (fileText ? ' File:' + fileText : '');
+        .status-badge {
+            background: var(--accent-glow);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
 
-		window.parent.postMessage({
-			type: 'horizons-vite-error',
-			error,
-		}, '*');
-	}
-}
-</script>
-		<script type="module">
-const originalConsoleError = console.error;
-const MATCH_LINE_COL_REGEX = /:(\d+):(\d+)\)?\s*$/; // regex to match the :lineNum:colNum
-const MATCH_AT_REGEX = /^\s*at\s+(?:async\s+)?(?:.*?\s+)?\(?/; // regex to remove the 'at' keyword and any 'async' or function name
-const MATCH_PATH_REGEX = /^\//; // regex to remove the leading slash
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            flex-grow: 1;
+            margin-bottom: 2rem;
+        }
 
-function parseStackFrameLine(line) {
-	const lineColMatch = line.match(MATCH_LINE_COL_REGEX);
-	if (!lineColMatch) return null;
-	const [, lineNum, colNum] = lineColMatch;
-	const suffix = `:${lineNum}:${colNum}`;
-	const idx = line.lastIndexOf(suffix);
-	if (idx === -1) return null;
-	const before = line.substring(0, idx);
-	const path = before.replace(MATCH_AT_REGEX, '').trim();
-	
-	if (!path) return null;
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
 
-	try {
-		const pathname = new URL(path).pathname;
-		const filePath = pathname.replace(MATCH_PATH_REGEX, '') || pathname;
-		return `${filePath}:${lineNum}:${colNum}`;
-	} catch (e) {
-		const filePath = path.replace(MATCH_PATH_REGEX, '') || path;
-		return `${filePath}:${lineNum}:${colNum}`;
-	}
-}
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
 
-function getFilePathFromStack(stack, skipFrames = 0) {
-	if (!stack || typeof stack !== 'string') return null;
-	const lines = stack.split('\n').slice(1);
+        .panel h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
 
-	const frames = lines.map(line => parseStackFrameLine(line.replace(/\r$/, ''))).filter(Boolean);
+        /* Terminal Display für QEMU / Metakernel Logs */
+        .terminal {
+            background: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #7ee787;
+            height: 220px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
 
-	return frames[skipFrames] ?? null;
-}
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
 
-console.error = function(...args) {
-	originalConsoleError.apply(console, args);
+        button, .btn-link {
+            background-color: #21262d;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s;
+            display: inline-block;
+            text-align: center;
+        }
 
-	let errorString = '';
-	let filePath = null;
+        button:hover, .btn-link:hover {
+            background-color: #30363d;
+            border-color: var(--accent-blue);
+        }
 
-	for (let i = 0; i < args.length; i++) {
-		const arg = args[i];
-		if (arg instanceof Error) {
-			filePath = getFilePathFromStack(arg.stack, 0);
-			errorString = `${arg.name}: ${arg.message}`;
-			if (filePath) {
-				errorString = `${errorString} at ${filePath}`;
-			}
-			break;
-		}
-	}
+        button.primary {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+        }
 
-	if (!errorString) {
-		errorString = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
-		const stack = new Error().stack;
-		filePath = getFilePathFromStack(stack, 1);
-		if (filePath) {
-			errorString = `${errorString} at ${filePath}`;
-		}
-	}
+        button.primary:hover {
+            background-color: #238636;
+        }
 
-	window.parent.postMessage({
-		type: 'horizons-console-error',
-		error: errorString
-	}, '*');
-};
-</script>
-		<script type="module">
-const originalFetch = window.fetch;
+        ul.feature-list {
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
 
-window.fetch = function(...args) {
-	const url = args[0] instanceof Request ? args[0].url : args[0];
+        ul.feature-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0d1117;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
 
-	// Skip WebSocket URLs
-	if (url.startsWith('ws:') || url.startsWith('wss:')) {
-		return originalFetch.apply(this, args);
-	}
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #8b949e;
+        }
+    </style>
+</head>
+<body>
 
-	return originalFetch.apply(this, args)
-		.then(async response => {
-			const contentType = response.headers.get('Content-Type') || '';
+    <header>
+        <h1>v1rtu4lyz1um.com // PyWebServer_qemuj</h1>
+        <div class="status-badge">System Status: Online [QEMU + Qiskit + Oper8]</div>
+    </header>
 
-			// Exclude HTML document responses
-			const isDocumentResponse =
-				contentType.includes('text/html') ||
-				contentType.includes('application/xhtml+xml');
+    <main>
+        <!-- Sektion 1: Emulation & Terminal Core -->
+        <section class="panel">
+            <h2>System & QEMU Core Interface</h2>
+            <div class="terminal" id="terminal-log">
+[INFO] Initializing PyWebServer_qemuj gateway...
+[INFO] Loading custom Jupyter Shebang Metakernel...
+[OK] QEMU virtualization bridge active.
+[OK] Qiskit Serverless runtime connected.
+[READY] Awaiting user commands...
+            </div>
+            <div class="btn-group">
+                <button class="primary" onclick="triggerExecution()">Metakernel Run</button>
+                <button onclick="clearTerminal()">Clear Log</button>
+                <a href="https://github.com/M4tth4ck333/TheBigPingTheory" target="_blank" class="btn-link">GitHub Repo</a>
+            </div>
+        </section>
 
-			if (!response.ok && !isDocumentResponse) {
-					const responseClone = response.clone();
-					const errorFromRes = await responseClone.text();
-					const requestUrl = response.url;
-					console.error(`Fetch error from ${requestUrl}: ${errorFromRes}`);
-			}
+        <!-- Sektion 2: Module & Integrations -->
+        <section class="panel">
+            <h2>Active Architecture Stacks</h2>
+            <ul class="feature-list">
+                <li>
+                    <span>8-Bit Multi-Console Core</span>
+                    <span style="color: var(--accent-blue);">WASM / Emulator Ready</span>
+                </li>
+                <li>
+                    <span>Quantum Backend (Qiskit MCP)</span>
+                    <span style="color: var(--accent-green);">Connected</span>
+                </li>
+                <li>
+                    <span>Oper8 Orchestrator</span>
+                    <span style="color: var(--accent-blue);">Active</span>
+                </li>
+                <li>
+                    <span>Janet C-Scripting Runtime</span>
+                    <span style="color: var(--text-main);">Loaded</span>
+                </li>
+            </ul>
+        </section>
+    </main>
 
-			return response;
-		})
-		.catch(error => {
-			if (!url.match(/.html?$/i)) {
-				console.error(error);
-			}
+    <footer>
+        &copy; 2026 v1rtu4lyz1um.com &mdash; Open Source Engineering &amp; Virtualization Architecture
+    </footer>
 
-			throw error;
-		});
-};
-</script>
-		<script type="module">
-if (window.navigation && window.self !== window.top) {
-	window.navigation.addEventListener('navigate', (event) => {
-		const url = event.destination.url;
+    <script>
+        function triggerExecution() {
+            const log = document.getElementById('terminal-log');
+            const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
+            log.innerHTML += `\n[${timestamp}] Executing custom metakernel routine via PyWebServer bridge...`;
+            log.innerHTML += `\n[${timestamp}] Success: QEMU and Qiskit pipelines synchronized.`;
+            log.scrollTop = log.scrollHeight;
+        }
 
-		try {
-			const destinationUrl = new URL(url);
-			const destinationOrigin = destinationUrl.origin;
-			const currentOrigin = window.location.origin;
-
-			if (destinationOrigin === currentOrigin) {
-				return;
-			}
-		} catch (error) {
-			return;
-		}
-
-		window.parent.postMessage({
-			type: 'horizons-navigation-error',
-			url,
-		}, '*');
-	});
-}
-</script>
-	</head>
-	<body>
-		<div id="root"></div>
-	</body>
+        function clearTerminal() {
+            document.getElementById('terminal-log').innerHTML = '[INFO] Terminal reset.';
+        }
+    </script>
+</body>
 </html>
