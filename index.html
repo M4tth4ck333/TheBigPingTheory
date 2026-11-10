@@ -226,7 +226,23 @@
             log.innerHTML += `\n[${timestamp}] Success: QEMU and Qiskit pipelines synchronized.`;
             log.scrollTop = log.scrollHeight;
         }
-
+async function triggerExecution() {
+    const log = document.getElementById('terminal-log');
+    const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
+    
+    log.innerHTML += `\n[${timestamp}] Requesting state from v1rtu4lyz1um.com backend...`;
+    
+    try {
+        const response = await fetch('/api/state');
+        const data = await response.json();
+        log.innerHTML += `\n[${timestamp}] Connected! DLC Guard: ${data.dlc_guard.slice(0, 12)}...`;
+        log.innerHTML += `\n[${timestamp}] Status: ${data.status} (Domain: ${data.domain})`;
+    } catch (err) {
+        log.innerHTML += `\n[${timestamp}] [WARN] Backend offline (fallback to simulation mode).`;
+    }
+    
+    log.scrollTop = log.scrollHeight;
+}
         function clearTerminal() {
             document.getElementById('terminal-log').innerHTML = '[INFO] Terminal reset.';
         }
